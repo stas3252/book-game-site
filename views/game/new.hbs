@@ -1,0 +1,80 @@
+
+<HTML>
+<HEAD>
+	<TITLE>new game</TITLE>
+	<link rel="stylesheet" type="text/css" href='/stylesheets/style.css'>
+</HEAD>
+<BODY>
+	<div class="main_place_new_game">
+		<table class="info_player">
+			<tr> <td>Имя:</td><td>{{Name}}</td><tr> 
+			<tr> <td>Сила:</td><td>{{Strength}}</td><tr> 
+			<tr> <td>Ловкость:</td><td>{{Agility}}</td><tr> 
+			<tr> <td>Харизма:</td><td>{{Charisma}}</td><tr> 
+			<tr> <td>Золото:</td><td>{{Gold}}</td><tr> 
+			<tr> <td>Фляга:</td><td>{{Flask}}</td><tr>
+			<tr> <td>Удача:</td><td>{{Luck}}</td><tr>
+		</table>
+		<div class="place_spells">
+			<input type="button" class="spell" id="levitation-spell" value="levitation-spell"/>
+			<input type="button" class="spell" id="fire-spell" value="fire-spell">
+			<input type="button" class="spell" id="illusion-spell" value="illusion-spell">
+			<input type="button" class="spell" id="power-spell" value="power-spell">
+			<input type="button" class="spell" id="weakness-spell" value="weakness-spell">
+			<input type="button" class="spell" id="copy-spell" value="copy-spell">
+			<input type="button" class="spell" id="healing-spell" value="healing-spell">
+			<input type="button" class="spell" id="swimming-spell" value="swimming-spell">
+		</div>
+		<div class="place_my_spells" data-count-spells="0" id="my_spells">
+		</div></br>
+		<button class="send_spells">Готово</button></br>
+	</div>
+</BODY>
+
+</HTML>
+
+<script type="text/javascript">
+
+	$('.spell').on('click', function(){
+		var countSpells = parseInt($('#my_spells').attr("data-count-spells"));
+		if (countSpells < 10) {
+			countSpells++;
+			var elem = $('<input/>').attr({
+				type: 'button',
+				value: $(this).attr('value'),
+				class: 'spell'
+			}).on('click', function(){
+				$(this).remove();
+				var count = parseInt($('#my_spells').attr("data-count-spells"));
+				count--;
+				$('#my_spells').attr({
+					"data-count-spells": count.toString()
+				});
+			});
+			$('.place_my_spells').append(elem);
+			$('#my_spells').attr({
+				"data-count-spells": countSpells.toString()
+			});
+		} else {
+			alert("Нельзя больше 10 заклнаний");
+		}	
+	});
+
+	$('.send_spells').on('click', function(){
+		var spells = "";
+		$('.place_my_spells').children().each(function(index, elem) {
+			spells += ($(this).attr('value')) + "/";
+		});
+		console.log(spells);
+		$.post('/game/new', {"MySpells": spells}, function(data){
+			/*if (data.status == "ok") {
+				location.reload();
+			}*/
+		});
+		$('.place_spells').remove();
+		$('.place_my_spells').remove();
+		var elem = $('<div class="start_level"><a href="/game/level">Дальше</a></div>');
+		$('.main_place_new_game').append(elem);
+	});
+
+</script>

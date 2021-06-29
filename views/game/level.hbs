@@ -1,0 +1,59 @@
+<link rel="stylesheet" type="text/css" href='/stylesheets/style.css'>
+{{Level.Id}}
+</br>
+{{Level.Text}}
+<ul>
+	{{#each Level.TextOptions}}
+		<button class="page" data-id="{{@index}}"> {{this}} </button> </br>
+	{{/each}}
+</ul>
+<table class="info_player">
+	<tr> <td>Имя:</td><td>{{Player.Name}}</td><tr> 
+	<tr> <td>Сила:</td><td>{{Player.Strength}}</td><tr> 
+	<tr> <td>Ловкость:</td><td>{{Player.Agility}}</td><tr> 
+	<tr> <td>Харизма:</td><td>{{Player.Charisma}}</td><tr> 
+	<tr> <td>Золото:</td><td>{{Player.Gold}}</td><tr>
+	<tr> <td>Фляга:</td><td>{{Player.Flask}}</td><tr>
+	<tr> <td>Удача:</td><td>{{Player.Luck}}</td><tr>
+	<tr> <td>Заклинания:</td><td>{{Player.MySpells}}</td><tr>
+</table>
+
+<div class="text-items">
+	Можно взять:
+</div>
+<div class="place-items">
+	{{#each Player.PlaceAddItems}}
+		<input type="button" class="item" value="{{this}}"/>
+	{{/each}}
+</div>
+
+<div class="text-my-items">
+	Рюкзак:
+</div>
+<div class="place-my-items">
+	{{#each Player.MyItems}}
+		<input type="button" class="item" value="{{this}}"/>
+	{{/each}}
+</div>
+
+<script type="text/javascript">
+	$(".page").on("click", function() {
+		var bag = "";
+		$('.place-my-items').children().each(function(index, elem) {
+			bag += ($(this).attr('value')) + "/";
+		});
+		console.log(bag);
+		$.post('/game/level', { "OptionId":  $(this).attr("data-id"), "Bag": bag}, function(data){
+			if (data.status == "ok") {
+				location.reload();
+			}
+		});
+	})
+	$(".item").on("click", function(){
+		if ($(this).parent().hasClass("place-items")) {
+			$('.place-my-items').append($(this).detach());
+		} else {
+			$('.place-items').append($(this).detach());
+		}
+	})
+</script>
